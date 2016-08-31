@@ -1,9 +1,9 @@
 /**
  * Zoomify
  * A jQuery plugin for simple lightboxes with zoom effect.
- * http://indrimuska.github.io/zoomify
+ * https://github.com/chenjin3/zoomify
  *
- * (c) 2015 Indri Muska - MIT
+ * (c) 2016 Chen Jin - MIT
  */
 ;(function($){
 	
@@ -78,30 +78,14 @@
 		
 		this.transition(this.$image, 'none');
 		this.transform('none');
-		
-		var offset     = this.$image.offset(),
-			width      = this.$image.outerWidth(),
-			height     = this.$image.outerHeight(),
-			nWidth     = this.$image[0].naturalWidth || +Infinity,
-			nHeight    = this.$image[0].naturalHeight || +Infinity,
-			wWidth     = $(window).width(),
-			wHeight    = $(window).height(),
-			scaleX     = Math.min(nWidth, wWidth * this.options.scale) / width,
-			scaleY     = Math.min(nHeight, wHeight * this.options.scale) / height,
-			scale      = Math.min(scaleX, scaleY),
-			translateX = (-offset.left + (wWidth - width) / 2) / scale,
-			translateY = (-offset.top + (wHeight - height) / 2 + $(document).scrollTop()) / scale;
-		
 		this.transform(transform);
 		
 		this._zooming = true;
-		this.$image.addClass('zoomed').trigger('zoom-in.zoomify');
+		this.$image.trigger('zoom-in.zoomify');
 		setTimeout(function () {
 			that.addShadow();
-			that.transformScaleAndTranslate(scale, translateX, translateY, function () {
-				that._zooming = false;
-				that.$image.trigger('zoom-in-complete.zoomify');
-			});
+			that._zooming = false;
+			that.$image.trigger('zoom-in-complete.zoomify');
 			that._zoomed = true;
 		});
 	};
@@ -112,7 +96,7 @@
 		this.$image.trigger('zoom-out.zoomify');
 		this.transformScaleAndTranslate(1, 0, 0, function () {
 			that._zooming = false;
-			that.$image.removeClass('zoomed').trigger('zoom-out-complete.zoomify');
+			that.$image.trigger('zoom-out-complete.zoomify');
 		});
 		this.removeShadow();
 		this._zoomed = false;
@@ -132,7 +116,7 @@
 		if (this._zoomed) return;
 		
 		if (that.$shadow) that.$shadow.remove();
-		this.$shadow = $('<div class="zoomify-shadow"></div>');
+		this.$shadow = $('<div class="zoomify-shadow"><img src="'+ this.$image.attr('src') +'"></div>');
 		$('body').append(this.$shadow);
 		this.addTransition(this.$shadow);
 		this.$shadow.on('click', function () { that.zoomOut(); })
