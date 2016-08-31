@@ -79,6 +79,7 @@
 		this.transition(this.$image, 'none');
 		this.transform('none');
 		this.transform(transform);
+
 		
 		this._zooming = true;
 		this.$image.trigger('zoom-in.zoomify');
@@ -94,10 +95,8 @@
 		
 		this._zooming = true;
 		this.$image.trigger('zoom-out.zoomify');
-		this.transformScaleAndTranslate(1, 0, 0, function () {
-			that._zooming = false;
-			that.$image.trigger('zoom-out-complete.zoomify');
-		});
+		that._zooming = false;
+		that.$image.trigger('zoom-out-complete.zoomify');
 		this.removeShadow();
 		this._zoomed = false;
 	};
@@ -119,6 +118,13 @@
 		this.$shadow = $('<div class="zoomify-shadow"><img src="'+ this.$image.attr('src') +'"></div>');
 		$('body').append(this.$shadow);
 		this.addTransition(this.$shadow);
+		var $zoomedInImage = $('.zoomify-shadow img')[0];
+		var realHeight   = $zoomedInImage.height,
+			wHeight    = $(window).height();
+
+		if(realHeight < wHeight) {
+			$('.zoomify-shadow img').css('top',(wHeight - realHeight)/2);
+		}
 		this.$shadow.on('click', function () { that.zoomOut(); })
 		
 		setTimeout(function () { that.$shadow.addClass('zoomed'); }, 10);
